@@ -2,6 +2,7 @@
 const { Router } = require('express');
 const router = Router();
 const { getAllCubes, getCube } = require('../controllers/database');
+const Cube = require('../models/cube');
 
 router.get('/', (req, res) => {
     getAllCubes((cubes) => {
@@ -18,11 +19,28 @@ router.get('/about', (req, res) => {
     });
 });
 
+
 router.get('/create', (req, res) => {
     res.render('create', {
         title: 'Create Cube | Cube Workshop'
     });
 });
+
+router.post('/create', (req, res) => {
+   const {
+       name,
+       description,
+       imageUrl,
+       difficultyLevel
+   } = req.body;
+
+   const cube = new Cube (name, description, imageUrl, difficultyLevel);
+
+   cube.save(() => {
+       res.redirect('/');
+   });
+});
+
 
 router.get('/details/:id', (req, res) => {
     getCube(req.params.id, (cube) => {
