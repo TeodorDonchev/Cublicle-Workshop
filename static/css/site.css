@@ -10,6 +10,12 @@ header ul {
     margin: 0;
 }
 
+#noCubes {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
 img {
     height: 200px;
     width: auto;

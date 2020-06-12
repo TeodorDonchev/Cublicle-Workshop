@@ -9,6 +9,8 @@
   </form>
   {{#each cubes}}
    {{> cube}}
+   {{else}}
+   <p id="noCubes">NO CUBES WERE FOUND</p>
   {{/each}}
   {{!-- <div class="cube">
     <img class="cube"
