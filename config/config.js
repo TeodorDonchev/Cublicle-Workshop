@@ -1,6 +1,7 @@
 module.exports = {
     development: {
-        port: process.env.PORT || 3000
+        port: process.env.PORT || 3000,
+        databaseUrl: `mongodb+srv://cubicle:${process.env.DB_PASSWORD}@cubicle-6tvqn.mongodb.net/cubicledb?retryWrites=true&w=majority`
     },
     production: {}
 };
