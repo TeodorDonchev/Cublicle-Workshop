@@ -60,7 +60,87 @@ const verifyUser = async (req, res) => {
     return status
 }
 
+const checkAuth = (req, res, next) => {
+    const token = req.cookies['aid'];
+
+    if (!token) {
+        return res.redirect('/');
+    }
+
+    try {
+        const userData = jwt.verify(token, config.privateKey);
+        if (userData) {
+            next();
+        } else {
+            res.redirect('/');
+        }
+    } catch (e) {
+        return res.redirect('/');
+    }
+  
+}
+
+const guestAccess = (req, res, next) => {
+    const token = req.cookies['aid'];
+
+    if (token) {
+        return res.redirect('/');
+    }
+
+    next();
+}
+
+const getUserStatus = (req, res, next) => {
+    const token = req.cookies['aid'];
+
+    if (!token) {
+        req.isLoggedIn = false;
+    }
+
+    try {
+        const userData = jwt.verify(token, config.privateKey);
+        if (userData) {
+            req.isLoggedIn = true;
+        } else {
+            req.isLoggedIn = false;
+        }
+    } catch (e) {
+       req.isLoggedIn = false;
+    }
+
+    next();
+}
+
+const authAccessJSON = (req, res, next) => {
+    const token = req.cookies['aid'];
+
+    if (!token) {
+        res.json({
+            error: "Not Authenticated"
+        });
+    }
+
+    try {
+        const userData = jwt.verify(token, config.privateKey);
+        if (userData) {
+            next();
+        } else {
+            res.json({
+                error: "Not Authenticated"
+            });
+        }
+    } catch (e) {
+        res.json({
+            error: "Not Authenticated"
+        });
+    }
+}
+
 module.exports = {
     saveUser,
-    verifyUser
+    verifyUser,
+    checkAuth, 
+    guestAccess,
+    getUserStatus,
+    authAccessJSON
 }

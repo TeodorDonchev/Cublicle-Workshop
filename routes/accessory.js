@@ -2,15 +2,17 @@ const express = require('express');
 const router = express.Router();
 const { getCube, getAllAccessories, attachAccessoryToCube } = require('../controllers/database');
 const Accessory = require('../models/accessory');
+const { checkAuth, getUserStatus } = require('../controllers/user');
 
 
-router.get('/create/accessory', (req, res) => {
+router.get('/create/accessory', checkAuth, getUserStatus, (req, res) => {
     res.render('createAccessory', {
-        title: 'Create Accessory | Cube Workshop'
+        title: 'Create Accessory | Cube Workshop',
+        isLoggedIn: req.isLoggedIn
     });
 });
 
-router.post('/create/accessory', async (req, res) => {
+router.post('/create/accessory', checkAuth, async (req, res) => {
     const {
         name,
         description,
@@ -33,7 +35,7 @@ router.post('/create/accessory', async (req, res) => {
     res.redirect('/');
 });
 
-router.get('/attach/accessory/:id', async (req, res) => {
+router.get('/attach/accessory/:id', checkAuth, getUserStatus, async (req, res) => {
     const cube = await getCube(req.params.id);
     let accessories = await getAllAccessories();
 
@@ -50,11 +52,12 @@ router.get('/attach/accessory/:id', async (req, res) => {
         title: 'Attach Accessory | Cube Workshop',
         ...cube,
         accessories: notAttachedAccessories,
-        isFullyAttached: canAttach
+        isFullyAttached: canAttach,
+        isLoggedIn: req.isLoggedIn
     });
 });
 
-router.post('/attach/accessory/:id', async (req, res) => {
+router.post('/attach/accessory/:id', checkAuth, async (req, res) => {
     const {
         accessory
     } = req.body
